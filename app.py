@@ -1,9 +1,10 @@
+import os
 from flask import Flask, request, render_template_string
 import pyshorteners
 
 app = Flask(__name__)
 
-# --- UNNODA DESIGN (HTML + CSS + JS) - NO CHANGES ---
+# --- UNNODA SAME DESIGN (No Changes in HTML/CSS) ---
 html_code = """
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +29,6 @@ html_code = """
             padding: 20px;
         }
 
-        /* The Glass Card Container */
         .box {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px);
@@ -57,7 +57,6 @@ html_code = """
             margin-bottom: 30px;
         }
 
-        /* Input Styling */
         input[type="text"] {
             width: 100%;
             padding: 15px;
@@ -71,11 +70,8 @@ html_code = """
             text-align: center;
         }
         
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
+        input::placeholder { color: rgba(255, 255, 255, 0.7); }
 
-        /* Button Styling */
         button.generate-btn {
             width: 100%;
             padding: 15px;
@@ -90,11 +86,8 @@ html_code = """
             box-shadow: 0 4px 15px rgba(240, 152, 25, 0.4);
         }
 
-        button.generate-btn:hover {
-            transform: scale(1.02);
-        }
+        button.generate-btn:hover { transform: scale(1.02); }
 
-        /* Result Area */
         .result-box {
             margin-top: 25px;
             background: rgba(0, 0, 0, 0.3);
@@ -134,16 +127,13 @@ html_code = """
             transition: background 0.3s;
         }
 
-        .action-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
+        .action-btn:hover { background: rgba(255,255,255,0.3); }
 
         .footer {
             margin-top: 30px;
             font-size: 12px;
             opacity: 0.6;
         }
-
     </style>
 </head>
 <body>
@@ -205,7 +195,7 @@ html_code = """
 </html>
 """
 
-# --- LOGIC (UPDATED TO IS.GD) ---
+# --- LOGIC ---
 @app.route('/', methods=['GET', 'POST'])
 def home():
     short_url = ""
@@ -213,12 +203,19 @@ def home():
         long_url = request.form.get('url')
         try:
             s = pyshorteners.Shortener()
-            # UPDATED: Using is.gd for direct links (No Preview Page)
+            # Try IS.GD first (Direct Link)
             short_url = s.isgd.short(long_url)
-        except Exception as e:
-            short_url = "Error: Check URL"
+        except:
+            # Fallback to TinyURL if is.gd fails
+            try:
+                s = pyshorteners.Shortener()
+                short_url = s.tinyurl.short(long_url)
+            except:
+                short_url = "Error: Check URL or Try Later"
     return render_template_string(html_code, short_url=short_url)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # MUKKIYAM: Render Dynamic Port Handling
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
     
