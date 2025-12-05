@@ -3,7 +3,7 @@ import pyshorteners
 
 app = Flask(__name__)
 
-# --- மேம்படுத்தப்பட்ட டிசைன் (HTML + CSS + JS) ---
+# --- UNNODA DESIGN (HTML + CSS + JS) - NO CHANGES ---
 html_code = """
 <!DOCTYPE html>
 <html lang="en">
@@ -205,7 +205,7 @@ html_code = """
 </html>
 """
 
-# --- லாஜிக் (Python) ---
+# --- LOGIC (UPDATED TO IS.GD) ---
 @app.route('/', methods=['GET', 'POST'])
 def home():
     short_url = ""
@@ -213,13 +213,12 @@ def home():
         long_url = request.form.get('url')
         try:
             s = pyshorteners.Shortener()
-            # TinyURL is reliable for free shortening without API keys
-            short_url = s.tinyurl.short(long_url)
+            # UPDATED: Using is.gd for direct links (No Preview Page)
+            short_url = s.isgd.short(long_url)
         except Exception as e:
             short_url = "Error: Check URL"
     return render_template_string(html_code, short_url=short_url)
 
 if __name__ == '__main__':
-    # Debug mode is on for testing
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
     
